@@ -5,7 +5,10 @@ import se.iths.entity.Student;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,10 +28,11 @@ fungerar som en controller kan man säga*/
         entityManager.merge(student);
     }
 
-    public Student findStudentById(Long id){
-    return entityManager.find(Student.class,id);
+    public Optional<Student> findStudentById(Long id){
+    return Optional.ofNullable(entityManager.find(Student.class,id));
 
     }
+
 
     public List<Student> getAllStudents(){
         return entityManager.createQuery("SELECT s FROM Student s",Student.class).getResultList();
@@ -39,6 +43,12 @@ fungerar som en controller kan man säga*/
         Student foundStudent = entityManager.find(Student.class, id);
         entityManager.remove(foundStudent);
         return foundStudent;
+    }
+
+    public List<Student> getStudentsByLastName(String lastName) {
+        TypedQuery<Student> query = entityManager.createQuery("SELECT s from Student s where s.lastName =:lastname", Student.class);
+        query.setParameter("lastname", lastName);
+        return query.getResultList();
     }
 
 
