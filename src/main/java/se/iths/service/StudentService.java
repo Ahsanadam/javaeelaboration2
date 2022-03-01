@@ -1,16 +1,13 @@
 package se.iths.service;
 
-
+import se.iths.ErrorMessage;
 import se.iths.entity.Student;
-
+import se.iths.exception.StudentNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.List;
-import java.util.Optional;
 
 @Transactional /* Denna annotationen talar om att klassen under interagerar med databasen.
  För att slippa göra en egen transaktion med begin() och close() etc. */
@@ -23,13 +20,19 @@ fungerar som en controller kan man säga*/
         entityManager.persist(student);
     }
 
-    public void updateStudent(Student student){
+    public Student updateStudent(Student student, Long id){
+        Student foundStudent = entityManager.find(Student.class, id);
+        if(foundStudent == null){
 
-        entityManager.merge(student);
+            throw new StudentNotFoundException(new ErrorMessage("404", "Item with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+        }
+
+        return entityManager.merge(student);
+
     }
 
-    public Optional<Student> findStudentById(Long id){
-    return Optional.ofNullable(entityManager.find(Student.class,id));
+    public Student findStudentById(Long id){
+    return entityManager.find(Student.class,id);
 
     }
 
@@ -50,7 +53,5 @@ fungerar som en controller kan man säga*/
         query.setParameter("lastname", lastName);
         return query.getResultList();
     }
-
-
 
 }

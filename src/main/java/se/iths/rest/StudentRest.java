@@ -1,8 +1,10 @@
 package se.iths.rest;
 
-
 import se.iths.ErrorMessage;
+import se.iths.rest.Message;
 import se.iths.entity.Student;
+import se.iths.exception.StudentDataInvalidException;
+import se.iths.exception.StudentNotFoundException;
 import se.iths.service.StudentService;
 
 import javax.inject.Inject;
@@ -10,9 +12,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
-import java.util.Optional;
 
-@Path("student")
+@Path("students")
 @Consumes(MediaType.APPLICATION_JSON) // Våran REST applikation kräver och tar emot i JSON format.
 @Produces(MediaType.APPLICATION_JSON) // Våran REST applikation skickar ut svaret i JSON format.
 public class StudentRest {
@@ -20,59 +21,68 @@ public class StudentRest {
     @Inject // Injicerar så att man kan använda sig utav StudentService klassen i StudentRest
     StudentService studentService;
 
-    @Path("create")
+    @Path("")
     @POST // Denna annotationen är tillför CREATE i REST
     public Response createStudent(Student student){
-        studentService.createStudent(student);
+
+        try {
+            studentService.createStudent(student);
+        } catch (Exception e) {
+            throw new StudentDataInvalidException();
+        }
+
         return Response.ok(student).build();
 
     }
 
-    @Path("update")
+    @Path("{id}")
     @PUT
-    public Response updateStudent(Student student){
-        studentService.updateStudent(student);
-        String responseString = "Studenten har uppdaterats ";
-        return Response.ok(responseString).type(MediaType.TEXT_PLAIN_TYPE).build();
+    public Response updateStudent(@PathParam("id") Long id, Student student){
+
+            studentService.updateStudent(student,id);
+
+            return Response.ok(student).build();
+
     }
 
     @Path("{id}")
     @GET
     public Response getStudent(@PathParam("id") Long id){
-        Optional<Student> foundStudent = studentService.findStudentById(id);
-
-        var student = foundStudent.orElseThrow(
-                () -> new WebApplicationException(Response.status(Response.Status.NOT_FOUND)
-                        .entity(new ErrorMessage("404", "Item with ID " + id + " was not found in database.", "/api/v1/student/" + id))
-                        .type(MediaType.APPLICATION_JSON_TYPE)
-                        .build()));
-
-
-        return Response.ok(student).build();
+        Student foundStudent = null;
+        try {
+            foundStudent = studentService.findStudentById(id);
+        } catch (Exception e) {
+           throw new StudentNotFoundException(new ErrorMessage("404", "Item with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+        }
+        return Response.ok(foundStudent).build();
     }
 
-    @Path("getall")
+
+    @Path("")
     @GET
-    public List<Student> getAllStudents(){
+    public List<Student> getAllStudents(){ //Fixa Response här istället
 
-        return studentService.getAllStudents();
+        return studentService.getAllStudents(); /* Behöver inte implementera någon exception, för att den
+         returnerar bara en tom lista ifall man inte får ut något */
     }
 
-    @Path("delete/{id}")
+    @Path("{id}")
     @DELETE
     public Response deleteStudent(@PathParam("id") Long id){
-        studentService.deleteStudent(id);
-        String responseString = "Studenten som du uppgav har tagits bort ifrån tabellen ";
-        return Response.ok(responseString).type(MediaType.TEXT_PLAIN_TYPE).build();
+        studentService.deleteStudent(id); /* Här behöver man inte lägga till någon exception eftersom att
+        man ändå får fram rätt resultat oavsett vad. Målet är ju att studenten ska vara borttagen*/
+        String responseString = "Studenten har tagits bort";
+
+        return Response.ok(new Message(responseString)).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
-    @Path("/filter")
+    @Path("filter/lastname")
     @GET
     public Response getAllStudentsByLastName(@QueryParam("lastName") String lastName){
-        List<Student> foundStudents = studentService.getStudentsByLastName(lastName);
+        List<Student> foundStudents = studentService.getStudentsByLastName(lastName); /* Behöver inte implementera någon exception, för att den
+         returnerar bara en tom lista ifall man inte får ut något */
         return Response.ok(foundStudents).build();
 
     }
-
 
 }
