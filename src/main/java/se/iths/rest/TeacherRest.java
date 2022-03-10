@@ -54,7 +54,7 @@ public class TeacherRest {
         try {
             foundTeacher = teacherService.findTeacherById(id);
         } catch (Exception e) {
-            throw new StudentNotFoundException(new ErrorMessage("404", "Teacher with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+            throw new StudentNotFoundException(new ErrorMessage("404", "Teacher with ID " + id + " was not found in database.", "/api/v1/teachers/" + id));
         }
         return Response.ok(foundTeacher).build();
     }

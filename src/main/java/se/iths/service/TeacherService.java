@@ -26,7 +26,7 @@ fungerar som en controller kan man säga*/
         Teacher foundTeacher = entityManager.find(Teacher.class, id);
         if(foundTeacher == null){
 
-            throw new StudentNotFoundException(new ErrorMessage("404", "Teacher with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+            throw new StudentNotFoundException(new ErrorMessage("404", "Teacher with ID " + id + " was not found in database.", "/api/v1/teachers/" + id));
         }
 
         return entityManager.merge(teacher);

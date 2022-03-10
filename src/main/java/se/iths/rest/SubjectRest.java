@@ -63,7 +63,7 @@ public class SubjectRest {
         try {
             foundSubject = subjectService.findSubjectById(id);
         } catch (Exception e) {
-            throw new StudentNotFoundException(new ErrorMessage("404", "Subject with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+            throw new StudentNotFoundException(new ErrorMessage("404", "Subject with ID " + id + " was not found in database.", "/api/v1/subjects/" + id));
         }
         return Response.ok(foundSubject).build();
     }

@@ -29,7 +29,7 @@ fungerar som en controller kan man säga*/
         Subject foundSubject = entityManager.merge(subject);
         if(foundSubject == null){
 
-            throw new StudentNotFoundException(new ErrorMessage("404", "Subject with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+            throw new StudentNotFoundException(new ErrorMessage("404", "Subject with ID " + id + " was not found in database.", "/api/v1/subjects/" + id));
         }
 
         return foundSubject;
