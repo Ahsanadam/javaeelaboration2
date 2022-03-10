@@ -1,17 +1,18 @@
 package se.iths.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 public class Student {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    public Long id;
     @NotEmpty
     private String firstName;
     @NotEmpty
@@ -20,6 +21,25 @@ public class Student {
     private String email;
 
     private String phoneNumber;
+
+
+    @JsonbTransient
+    @ManyToMany(mappedBy = "enrolledStudents" )
+    private List<Subject> subjects = new ArrayList<>();
+
+
+    public Student(){
+
+    }
+
+
+    public Student(Long id, String firstName, String lastName, String email, String phoneNumber) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+    }
 
     public Long getId() {
         return id;
@@ -59,6 +79,10 @@ public class Student {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public List<Subject> getSubjects() {
+        return subjects;
     }
 
 }
