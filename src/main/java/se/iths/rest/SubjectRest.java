@@ -100,10 +100,14 @@ public class SubjectRest {
     @PUT
     public Response enrollStudentToSubject(@PathParam("subjectId") Long subjectId, @PathParam("studentId") Long studentId){
 
-        Subject subject = subjectService.findSubjectById(subjectId);
-        Student student = studentService.findStudentById(studentId);
-        subject.enrollStudent(student);
-        subjectService.updateSubject(subject,subjectId);
+        try {
+            Subject subject = subjectService.findSubjectById(subjectId);
+            Student student = studentService.findStudentById(studentId);
+            subject.enrollStudent(student);
+            subjectService.updateSubject(subject,subjectId);
+        } catch (Exception e) {
+            throw new StudentNotFoundException(new ErrorMessage("404", " The ID or IDs were not found in database.", "/api/v1/subjects/"));
+        }
 
         return Response.ok().build();
     }
@@ -112,10 +116,14 @@ public class SubjectRest {
     @PUT
     public Response assignTeacherToSubject(@PathParam("subjectId") Long subjectId, @PathParam("teacherId") Long teacherId){
 
-        Subject subject = subjectService.findSubjectById(subjectId);
-        Teacher teacher = teacherService.findTeacherById(teacherId);
-        subject.assignTeacher(teacher);
-        subjectService.updateSubject(subject,subjectId);
+        try {
+            Subject subject = subjectService.findSubjectById(subjectId);
+            Teacher teacher = teacherService.findTeacherById(teacherId);
+            subject.assignTeacher(teacher);
+            subjectService.updateSubject(subject,subjectId);
+        } catch (Exception e) {
+            throw new StudentNotFoundException(new ErrorMessage("404", " The ID or IDs were not found in database.", "/api/v1/subjects/"));
+        }
         return Response.ok().build();
     }
 

@@ -23,7 +23,8 @@ public class Student {
     private String phoneNumber;
 
 
-    @JsonbTransient
+    @JsonbTransient /*Denna annotation används för att det inte skall bli ett rekursivt problem mellan
+    relationerna */
     @ManyToMany(mappedBy = "enrolledStudents" )
     private List<Subject> subjects = new ArrayList<>();
 
