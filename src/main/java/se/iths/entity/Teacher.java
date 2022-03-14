@@ -6,13 +6,12 @@ import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Entity
-public class Student {
+public class Teacher {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Long id;
+    private long teacherId;
     @NotEmpty
     private String firstName;
     @NotEmpty
@@ -20,34 +19,27 @@ public class Student {
     @NotEmpty
     private String email;
 
-    private String phoneNumber;
+    @JsonbTransient
+    @OneToMany(mappedBy = "teacher")
+    List<Subject> subjects = new ArrayList<>();
 
 
-    @JsonbTransient /*Denna annotation används för att det inte skall bli ett rekursivt problem mellan
-    relationerna */
-    @ManyToMany(mappedBy = "enrolledStudents" )
-    private List<Subject> subjects = new ArrayList<>();
-
-
-    public Student(){
-
-    }
-
-
-    public Student(Long id, String firstName, String lastName, String email, String phoneNumber) {
-        this.id = id;
+    public Teacher(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.phoneNumber = phoneNumber;
     }
 
-    public Long getId() {
-        return id;
+    public Teacher(){
+
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public long getId() {
+        return teacherId;
+    }
+
+    public void setId(long teacherId) {
+        this.teacherId = teacherId;
     }
 
     public String getFirstName() {
@@ -74,16 +66,9 @@ public class Student {
         this.email = email;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public List<Subject> getSubjects() {
         return subjects;
     }
+
 
 }

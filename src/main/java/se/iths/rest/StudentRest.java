@@ -52,7 +52,7 @@ public class StudentRest {
         try {
             foundStudent = studentService.findStudentById(id);
         } catch (Exception e) {
-           throw new StudentNotFoundException(new ErrorMessage("404", "Item with ID " + id + " was not found in database.", "/api/v1/student/" + id));
+           throw new StudentNotFoundException(new ErrorMessage("404", "Student with ID " + id + " was not found in database.", "/api/v1/student/" + id));
         }
         return Response.ok(foundStudent).build();
     }
